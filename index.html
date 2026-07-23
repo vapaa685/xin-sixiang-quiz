@@ -85,5 +85,9 @@ const setupExamWithDefaultTypeCounts=setupExam;
 setupExam=function(){setupExamWithDefaultTypeCounts();const defaults={single:20,multiple:10,judgment:10};document.querySelectorAll('.exam-type-count').forEach(input=>{input.value=defaults[input.dataset.type]??0;input.dispatchEvent(new Event('input',{bubbles:true}))})};
 const renderStatsWithExamColumns=stats;
 stats=function(sort='number-asc',chapter='all'){renderStatsWithExamColumns(sort,chapter);const examTitle=[...document.querySelectorAll('.section-title')].find(title=>title.textContent==='模拟考试'),table=examTitle?.nextElementSibling?.querySelector('table');if(!table)return;const rows=[...S.exams].reverse().map((exam,index)=>{const rate=exam.total?Math.round(exam.score/exam.total*100)+'%':'—';return `<tr><td>${index+1}</td><td>${exam.total}</td><td>${exam.score}</td><td>${rate}</td></tr>`}).join('');table.innerHTML=`<thead><tr><th>序号</th><th>总分</th><th>得分</th><th>正确率</th></tr></thead><tbody>${rows}</tbody>`};
+const setupExamWithGroupedDefaults=setupExam;
+setupExam=function(){setupExamWithGroupedDefaults();const defaults={single:20,multiple:10,judgment:0};document.querySelectorAll('.exam-type-count').forEach(input=>{input.value=defaults[input.dataset.type]??0;input.dispatchEvent(new Event('input',{bubbles:true}))});const subtitle=document.querySelector('.top p');if(subtitle)subtitle.textContent='按题型配比时先单选、后多选、再判断；组内题目和所有选项随机排列'};
+const startExamWithOriginalOrder=startExam;
+startExam=function(spec){if(spec&&typeof spec==='object'&&!Array.isArray(spec)){const types=['single','multiple','judgment'],qs=types.flatMap(type=>shuffle(DB.questions.filter(q=>q.type===type)).slice(0,Number(spec[type])||0));return startSession('exam',qs,{shuffle:true})}return startExamWithOriginalOrder(spec)};
 home();
 </script></body></html>
